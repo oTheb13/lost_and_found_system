@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block body %}
+<h2>Review claim #{{ c.claim_id }} ({{ c.status }})</h2>
+<p>Claimant: <b>{{ c.claimant }}</b> · submitted {{ c.claimed_at }}</p>
+<h3>Proof of ownership</h3><p>{{ c.proof_of_ownership }}</p>
+<h3>Verification answers</h3>
+<table><tr><th>Question</th><th>Claimant's answer</th></tr>
+{% for r in qa %}<tr><td>{{ r.question_text }}</td><td>{{ r.answer_text }}</td></tr>{% else %}<tr><td colspan="2">No questions were set.</td></tr>{% endfor %}</table>
+<h3>Found item (private details)</h3>
+<table><tr><th>Description</th><td>{{ c.found_description }}</td></tr>
+<tr><th>Color / brand</th><td>{{ c.found_color or '—' }} / {{ c.found_brand or '—' }}</td></tr>
+<tr><th>Status</th><td>{{ c.found_status }}</td></tr></table>
+{% if lost %}<h3>Claimant's lost report (private details)</h3>
+<table><tr><th>Item</th><td>{{ lost.item_name }}</td></tr>
+<tr><th>Distinguishing features</th><td>{{ lost.distinguishing_features }}</td></tr>
+<tr><th>Color / brand</th><td>{{ lost.color or '—' }} / {{ lost.brand or '—' }}</td></tr></table>{% endif %}
+{% if c.status == 'Pending' %}
+<form class="inline" method="post" action="{{ url_for('claim_decide', claim_id=c.claim_id) }}"><input type="hidden" name="decision" value="Approved"><button>Approve</button></form>
+<form class="inline" method="post" action="{{ url_for('claim_decide', claim_id=c.claim_id) }}"><input type="hidden" name="decision" value="Rejected"><button>Reject</button></form>
+{% endif %}
+<p><a href="{{ url_for('admin') }}">Back to dashboard</a></p>
+{% endblock %}

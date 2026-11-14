@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block body %}
+<h2>Found item #{{ item.found_id }}</h2>
+<table>
+<tr><th>Category</th><td>{{ item.category_name }}</td></tr>
+<tr><th>Found at</th><td>{{ item.location_name }}</td></tr>
+<tr><th>Date found</th><td>{{ item.date_found }}</td></tr>
+<tr><th>Status</th><td>{{ item.status }}</td></tr>
+{% if item.photo_url %}<tr><th>Photo</th><td><img src="{{ url_for('static', filename=item.photo_url) }}"></td></tr>{% endif %}
+</table>
+<p><em>Other details are hidden to prevent false claims.</em></p>
+<h3>Is this yours? Claim it</h3>
+{% if not me %}<p><a href="{{ url_for('login', next=request.path) }}">Log in</a> to claim.</p>
+{% else %}
+<form method="post" action="{{ url_for('claim_submit', found_id=item.found_id) }}">
+  <label>Which of your lost reports is this? (optional)</label>
+  <select name="lost_id"><option value="">None</option>{% for m in mine %}<option value="{{ m.lost_id }}">{{ m.item_name }}</option>{% endfor %}</select>
+  <label>Proof of ownership * (describe something only the owner would know)</label><textarea name="proof" required></textarea>
+  {% for q in questions %}<label>{{ q.question_text }} *</label><input name="answer_{{ q.question_id }}" required>{% endfor %}
+  <p><button>Submit claim</button></p>
+</form>{% endif %}{% endblock %}

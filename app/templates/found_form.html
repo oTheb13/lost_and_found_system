@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block body %}
+<h2>Report a found item</h2>
+<form method="post" enctype="multipart/form-data">
+  <label>Category *</label><select name="category_id">{% for c in cats %}<option value="{{ c.category_id }}">{{ c.category_name }}</option>{% endfor %}</select>
+  <label>Found at *</label><select name="location_id">{% for l in locs %}<option value="{{ l.location_id }}">{{ l.location_name }}</option>{% endfor %}</select>
+  <label>Date &amp; time found *</label><input type="datetime-local" name="date_found" required>
+  <label>Description (private, only admins see this)</label><textarea name="description"></textarea>
+  <label>Color</label><input name="color"><label>Brand</label><input name="brand">
+  <label>Currently stored at</label>
+  <select name="storage_id"><option value="">Not turned in yet</option>{% for s in storages %}<option value="{{ s.storage_id }}">{{ s.office_name }}</option>{% endfor %}</select>
+  <label>Photo</label><input type="file" name="photo" accept="image/*">
+  <h3>Verification questions (only the real owner can answer)</h3>
+  <input name="question1" placeholder="e.g. What is engraved on it?"><br>
+  <input name="question2" placeholder="Question 2 (optional)"><br>
+  <input name="question3" placeholder="Question 3 (optional)">
+  <p><button>Submit found report</button></p>
+</form>{% endblock %}

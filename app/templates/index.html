@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% block body %}
+<h2>Browse lost &amp; found</h2>
+<form method="get">
+  <input name="q" placeholder="Keyword" value="{{ f.get('q','') }}" style="width:200px">
+  <select name="kind"><option value="">Lost + found</option>
+    <option value="lost" {{ 'selected' if f.get('kind')=='lost' }}>Lost only</option>
+    <option value="found" {{ 'selected' if f.get('kind')=='found' }}>Found only</option></select>
+  <select name="category"><option value="">All categories</option>
+    {% for c in cats %}<option {{ 'selected' if f.get('category')==c.category_name }}>{{ c.category_name }}</option>{% endfor %}</select>
+  <select name="location"><option value="">All locations</option>
+    {% for l in locs %}<option {{ 'selected' if f.get('location')==l.location_name }}>{{ l.location_name }}</option>{% endfor %}</select>
+  <select name="status"><option value="">Any status</option>
+    {% for s in ['Lost','Matched','Reported','Stored'] %}<option {{ 'selected' if f.get('status')==s }}>{{ s }}</option>{% endfor %}</select>
+  <br>From <input type="date" name="date_from" value="{{ f.get('date_from','') }}" style="width:auto">
+  to <input type="date" name="date_to" value="{{ f.get('date_to','') }}" style="width:auto">
+  <button>Search</button> <a href="{{ url_for('index') }}">Reset</a>
+</form>
+<p>{{ items|length }} result(s), newest first.</p>
+<table>
+<tr><th>Type</th><th>Item</th><th>Category</th><th>Location</th><th>Date</th><th>Status</th><th>Photo</th></tr>
+{% for i in items %}<tr>
+  <td>{{ i.kind }}</td>
+  <td>{% if i.kind=='found' %}<a href="{{ url_for('found_detail', found_id=i.id) }}">{{ i.title }}</a>{% else %}{{ i.title }}{% endif %}</td>
+  <td>{{ i.category_name }}</td><td>{{ i.location_name }}</td><td>{{ i.event_date }}</td><td>{{ i.status }}</td>
+  <td>{% if i.photo_url %}<img src="{{ url_for('static', filename=i.photo_url) }}">{% endif %}</td>
+</tr>{% else %}<tr><td colspan="7">Nothing matches. Try fewer filters.</td></tr>{% endfor %}
+</table>{% endblock %}

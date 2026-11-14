@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block body %}
+<h2>Log in (dev mode)</h2>
+<p>Pick any seeded user to test that role. Real password login is a TODO.</p>
+<form method="post">
+  <select name="user_id">{% for u in users %}<option value="{{ u.user_id }}">{{ u.first_name }} {{ u.last_name }} ({{ u.role }})</option>{% endfor %}</select>
+  <button>Log in</button>
+</form>{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block body %}
+<h2>Notifications</h2>
+<ul>{% for n in notes %}<li>{{ '' if n.is_read else '🔔 ' }}{{ n.message }} <small>({{ n.created_at }})</small></li>{% else %}<li>None yet.</li>{% endfor %}</ul>
+
+<h2>Possible matches for my lost items</h2>
+<table><tr><th>My lost item</th><th>Found item</th><th>Score</th><th></th></tr>
+{% for m in matches %}<tr><td>{{ m.item_name }}</td>
+  <td><a href="{{ url_for('found_detail', found_id=m.found_id) }}">{{ m.category_name }} at {{ m.location_name }} ({{ m.date_found }})</a></td>
+  <td>{{ m.match_score }}</td>
+  <td><form class="inline" method="post" action="{{ url_for('match_action', match_id=m.match_id, action='confirm') }}"><button>Looks right</button></form>
+      <form class="inline" method="post" action="{{ url_for('match_action', match_id=m.match_id, action='dismiss') }}"><button>Not mine</button></form></td></tr>
+{% else %}<tr><td colspan="4">No suggestions yet.</td></tr>{% endfor %}</table>
+
+<h2>My lost reports</h2>
+<table><tr><th>#</th><th>Item</th><th>Date lost</th><th>Status</th></tr>
+{% for r in lost %}<tr><td>{{ r.lost_id }}</td><td>{{ r.item_name }}</td><td>{{ r.date_lost }}</td><td>{{ r.status }}</td></tr>{% else %}<tr><td colspan="4">None.</td></tr>{% endfor %}</table>
+
+<h2>Items I found</h2>
+<table><tr><th>#</th><th>Category</th><th>Date found</th><th>Status</th></tr>
+{% for r in found %}<tr><td>{{ r.found_id }}</td><td>{{ r.category_name }}</td><td>{{ r.date_found }}</td><td>{{ r.status }}</td></tr>{% else %}<tr><td colspan="4">None.</td></tr>{% endfor %}</table>
+
+<h2>My claims</h2>
+<table><tr><th>#</th><th>Found item</th><th>Status</th><th>Submitted</th><th>Released</th></tr>
+{% for c in claims %}<tr><td>{{ c.claim_id }}</td><td>#{{ c.found_id }}</td><td>{{ c.status }}</td><td>{{ c.claimed_at }}</td><td>{{ c.released_at or '—' }}</td></tr>{% else %}<tr><td colspan="5">None.</td></tr>{% endfor %}</table>
+{% endblock %}

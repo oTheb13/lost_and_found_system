@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block body %}
+<h2>Report a lost item</h2>
+<form method="post" enctype="multipart/form-data">
+  <label>Item name *</label><input name="item_name" required>
+  <label>Category *</label><select name="category_id">{% for c in cats %}<option value="{{ c.category_id }}">{{ c.category_name }}</option>{% endfor %}</select>
+  <label>Last seen at *</label><select name="location_id">{% for l in locs %}<option value="{{ l.location_id }}">{{ l.location_name }}</option>{% endfor %}</select>
+  <label>Date &amp; approx. time lost *</label><input type="datetime-local" name="date_lost" required>
+  <label>Description</label><textarea name="description"></textarea>
+  <label>Distinguishing features (private, only admins see this)</label><textarea name="distinguishing_features"></textarea>
+  <label>Color</label><input name="color"><label>Brand</label><input name="brand">
+  <label>Photo</label><input type="file" name="photo" accept="image/*">
+  <p><button>Submit lost report</button></p>
+</form>{% endblock %}

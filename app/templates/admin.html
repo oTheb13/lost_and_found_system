@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% block body %}
+<h2>Dashboard</h2>
+<table><tr><th>Total lost</th><th>Total found</th><th>Unclaimed</th><th>Pending claims</th><th>Returned</th></tr>
+<tr><td>{{ summary.total_lost }}</td><td>{{ summary.total_found }}</td><td>{{ summary.unclaimed_items }}</td><td>{{ summary.pending_claims }}</td><td>{{ summary.returned_items }}</td></tr></table>
+
+<h3>Pending claims</h3>
+<table><tr><th>Claim</th><th>Found item</th><th>Claimant</th><th>Submitted</th><th></th></tr>
+{% for c in pending %}<tr><td>#{{ c.claim_id }}</td><td>#{{ c.found_id }}</td><td>{{ c.claimant }}</td><td>{{ c.claimed_at }}</td><td><a href="{{ url_for('claim_review', claim_id=c.claim_id) }}">Review</a></td></tr>
+{% else %}<tr><td colspan="5">No pending claims.</td></tr>{% endfor %}</table>
+
+<h3>Approved, waiting for release</h3>
+<table><tr><th>Claim</th><th>Found item</th><th>Claimant</th><th></th></tr>
+{% for c in to_release %}<tr><td>#{{ c.claim_id }}</td><td>#{{ c.found_id }}</td><td>{{ c.claimant }}</td>
+<td><form class="inline" method="post" action="{{ url_for('claim_release', claim_id=c.claim_id) }}"><button>Mark as released</button></form></td></tr>
+{% else %}<tr><td colspan="4">None.</td></tr>{% endfor %}</table>
+
+<h3>Found items not yet turned in</h3>
+<table><tr><th>#</th><th>Category</th><th>Found at</th><th>Date</th><th>Store at</th></tr>
+{% for f in unstored %}<tr><td>{{ f.found_id }}</td><td>{{ f.category_name }}</td><td>{{ f.location_name }}</td><td>{{ f.date_found }}</td>
+<td><form class="inline" method="post" action="{{ url_for('found_store', found_id=f.found_id) }}">
+<select name="storage_id">{% for s in storages %}<option value="{{ s.storage_id }}">{{ s.office_name }}</option>{% endfor %}</select> <button>Mark stored</button></form></td></tr>
+{% else %}<tr><td colspan="5">None.</td></tr>{% endfor %}</table>
+
+<h3>Top locations</h3>
+<table>{% for r in top_locs %}<tr><td>{{ r.location_name }}</td><td>{{ r.report_count }}</td></tr>{% endfor %}</table>
+<h3>Top categories</h3>
+<table>{% for r in top_cats %}<tr><td>{{ r.category_name }}</td><td>{{ r.report_count }}</td></tr>{% endfor %}</table>
+<h3>Monthly recovery</h3>
+<table><tr><th>Month</th><th>Found reports</th><th>Returned</th><th>Recovery %</th><th>Avg hours to return</th></tr>
+{% for r in monthly %}<tr><td>{{ r.month }}</td><td>{{ r.found_reports }}</td><td>{{ r.returned }}</td><td>{{ r.recovery_rate_pct }}</td><td>{{ r.avg_hours_to_return if r.avg_hours_to_return is not none else '—' }}</td></tr>{% endfor %}</table>
+<h3>Recent activity</h3>
+<table><tr><th>When</th><th>What</th><th>ID</th><th>Action</th><th>By user</th></tr>
+{% for l in log %}<tr><td>{{ l.logged_at }}</td><td>{{ l.entity_type }}</td><td>{{ l.entity_id }}</td><td>{{ l.action_taken }}</td><td>{{ l.performed_by_user_id or '—' }}</td></tr>{% endfor %}</table>
+{% endblock %}
